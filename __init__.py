@@ -13,7 +13,6 @@ bl_info = {
     "category": "Previz",
 }
 
-
 # Importar módulos
 module_names = [
     "panels.pvz_panel",
