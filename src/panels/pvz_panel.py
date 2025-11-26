@@ -125,6 +125,45 @@ class PVZ_OT_exit_previz_mode(Operator):
         return {'CANCELLED'}
 
 
+class PVZ_OT_switch_camera(Operator):
+    """Troca para a câmera selecionada"""
+    bl_idname = "pvz.switch_camera"
+    bl_label = "Trocar Câmera"
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    def execute(self, context):
+        scene = context.scene
+        pvz_props = scene.pvz_properties
+        
+        # Verificar se existe uma câmera selecionada
+        if pvz_props.camera_index >= 0 and pvz_props.camera_index < len(pvz_props.cameras):
+            selected_camera_name = pvz_props.cameras[pvz_props.camera_index].obj_name
+            selected_camera = bpy.data.objects.get(selected_camera_name)
+            
+            if selected_camera is None:
+                self.report({'ERROR'}, f"Câmera '{selected_camera_name}' não encontrada")
+                return {'CANCELLED'}
+            
+            # Trocar câmera ativa da cena
+            scene.camera = selected_camera
+            
+            # Se estiver na visão de câmera, forçar atualização
+            for area in context.screen.areas:
+                if area.type == 'VIEW_3D':
+                    space = area.spaces.active
+                    if space.type == 'VIEW_3D':
+                        if space.region_3d.view_perspective == 'CAMERA':
+                            # Força atualização da viewport
+                            area.tag_redraw()
+                    break
+            
+            self.report({'INFO'}, f"Câmera trocada para: {selected_camera.name}")
+            return {'FINISHED'}
+        else:
+            self.report({'ERROR'}, "Nenhuma câmera selecionada")
+            return {'CANCELLED'}
+
+
 class PVZ_OT_refresh_cameras(Operator):
     """Atualiza a lista de câmeras da collection POV"""
     bl_idname = "pvz.refresh_cameras"
@@ -209,6 +248,12 @@ class PVZ_PT_main_panel(Panel):
         row = box.row()
         row.operator("pvz.refresh_cameras", icon='FILE_REFRESH')
         
+        # Botão para trocar câmera
+        if len(pvz_props.cameras) > 0:
+            row = box.row()
+            row.scale_y = 1.3
+            row.operator("pvz.switch_camera", text="TROCAR CÂMERA", icon='CAMERA_DATA')
+        
         # Mostrar câmera selecionada
         if pvz_props.camera_index >= 0 and len(pvz_props.cameras) > 0:
             if pvz_props.camera_index < len(pvz_props.cameras):
@@ -256,6 +301,7 @@ classes = (
     PVZ_OT_toggle_previz_mode,
     PVZ_OT_toggle_focus_mode,
     PVZ_OT_exit_previz_mode,
+    PVZ_OT_switch_camera,
     PVZ_OT_refresh_cameras,
     PVZ_UL_camera_list,
     PVZ_PT_main_panel,
