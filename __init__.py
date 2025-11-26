@@ -15,10 +15,10 @@ bl_info = {
 
 
 # Importar módulos de forma relativa
-from . import panels
+from . import src
 
 modules = [
-    panels.pvz_panel,
+    src.panels.pvz_panel,
 ]
 
 
