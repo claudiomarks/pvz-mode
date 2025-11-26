@@ -13,21 +13,13 @@ bl_info = {
     "category": "Previz",
 }
 
-# Importar módulos
-module_names = [
-    "panels.pvz_panel",
-]
 
-modules = []
-for module_name in module_names:
-    if module_name in sys.modules:
-        modules.append(importlib.reload(sys.modules[module_name]))
-    else:
-        parent = ".".join(__name__.split(".")[:-1])
-        if parent:
-            modules.append(importlib.import_module(f".{module_name}", parent))
-        else:
-            modules.append(importlib.import_module(module_name))
+# Importar módulos de forma relativa
+from . import panels
+
+modules = [
+    panels.pvz_panel,
+]
 
 
 def register():
