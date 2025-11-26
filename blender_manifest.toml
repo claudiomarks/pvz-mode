@@ -1,0 +1,26 @@
+schema_version = "1.0.0"
+name = "Previz Mode"
+author = "claudiomarks"
+version = "0.1.0"
+id = "pvz-mode"
+tagline = "Automatically connect ViewLayers to File Output nodes"
+maintainer = "claudiomarks"
+type = "add-on"
+tags = ["Previz", "Production"]
+blender_version_min = "5.0.0"
+license = ["SPDX:GPL-3.0-or-later"]
+copyright = [
+    "2025 Histeria"
+]
+include = [
+    "src/**/*.py",
+    "README.md",
+    "__init__.py",
+]
+
+# Files to exclude from the addon distribution
+exclude = [
+    "**/__pycache__/**",
+    "**/.git/**",
+    "**/.github/**",
+]
