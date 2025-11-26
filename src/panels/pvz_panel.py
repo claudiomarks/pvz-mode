@@ -60,12 +60,12 @@ class PVZ_OT_toggle_previz_mode(Operator):
         # 5. Ativar modo rendered no viewport e entrar na visão da câmera
         for area in context.screen.areas:
             if area.type == 'VIEW_3D':
-                for space in area.spaces:
-                    if space.type == 'VIEW_3D':
-                        space.shading.type = 'RENDERED'
-                        # Entrar na visão da câmera
-                        space.region_3d.view_perspective = 'CAMERA'
-                        break
+                space = area.spaces.active
+                if space.type == 'VIEW_3D':
+                    space.shading.type = 'RENDERED'
+                    # Entrar na visão da câmera usando operador
+                    with context.temp_override(area=area, space=space):
+                        bpy.ops.view3d.view_camera()
                 break
         
         self.report({'INFO'}, f"Modo Previz ativado com câmera: {selected_camera.name}")
@@ -113,11 +113,11 @@ class PVZ_OT_exit_previz_mode(Operator):
                 # Sair da visão da câmera se estiver nela
                 for area in context.screen.areas:
                     if area.type == 'VIEW_3D':
-                        for space in area.spaces:
-                            if space.type == 'VIEW_3D':
-                                if space.region_3d.view_perspective == 'CAMERA':
-                                    space.region_3d.view_perspective = 'PERSP'
-                                break
+                        space = area.spaces.active
+                        if space.type == 'VIEW_3D':
+                            if space.region_3d.view_perspective == 'CAMERA':
+                                with context.temp_override(area=area, space=space):
+                                    bpy.ops.view3d.view_camera()
                         break
                 
                 self.report({'INFO'}, f"Voltou para cena: {scene.name}")
@@ -250,22 +250,6 @@ class PVZ_PT_main_panel(Panel):
             row.operator("pvz.toggle_focus_mode", 
                         text="ATIVAR FOCUS MODE", 
                         icon='FULLSCREEN_ENTER')
-        
-        # Informações da cena atual
-        layout.separator()
-        box = layout.box()
-        box.label(text="Status:", icon='INFO')
-        box.label(text=f"Cena: {context.scene.name}", icon='SCENE_DATA')
-        box.label(text=f"Engine: {context.scene.render.engine}", icon='RESTRICT_RENDER_OFF')
-        
-        if context.scene.camera:
-            box.label(text=f"Câmera Ativa: {context.scene.camera.name}", icon='CAMERA_DATA')
-        
-        # Status do Focus Mode
-        if context.screen.show_fullscreen:
-            box.label(text="Focus Mode: ATIVO", icon='FULLSCREEN_ENTER')
-        else:
-            box.label(text="Focus Mode: INATIVO", icon='FULLSCREEN_EXIT')
 
 
 classes = (
