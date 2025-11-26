@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 name = "Previz Mode"
 author = "claudiomarks"
-version = "0.2.0"
+version = "0.3.0"
 id = "pvz_mode"
 tagline = "alterna facilmente entre modo de trabalho e modo de previz"
 maintainer = "claudiomarks"
