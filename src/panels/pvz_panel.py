@@ -34,27 +34,33 @@ class PVZ_OT_toggle_previz_mode(Operator):
         previz_scene.render.engine = 'BLENDER_EEVEE'
         
         # 4. Ativar modo rendered no viewport
-        view3d_area = None
         for area in context.screen.areas:
             if area.type == 'VIEW_3D':
-                view3d_area = area
                 for space in area.spaces:
                     if space.type == 'VIEW_3D':
                         space.shading.type = 'RENDERED'
+                        break
                 break
         
-        # 5. Ativar Focus Mode (maximizar 3D Viewport)
-        if view3d_area:
-            # Temporariamente mudar o contexto para a área 3D View
-            override = context.copy()
-            override['area'] = view3d_area
-            override['region'] = view3d_area.regions[-1]
-            
-            # Ativar o focus mode (tela cheia da área)
-            with context.temp_override(**override):
-                bpy.ops.screen.screen_full_area()
+        self.report({'INFO'}, "Modo Previz ativado")
+        return {'FINISHED'}
+
+
+class PVZ_OT_toggle_focus_mode(Operator):
+    """Ativa/Desativa Focus Mode (fullscreen da área 3D)"""
+    bl_idname = "pvz.toggle_focus_mode"
+    bl_label = "Toggle Focus Mode"
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    def execute(self, context):
+        # Encontrar a área 3D View
+        for area in context.screen.areas:
+            if area.type == 'VIEW_3D':
+                # Usar override correto para Blender 5.0+
+                with context.temp_override(area=area):
+                    bpy.ops.screen.screen_full_area()
+                break
         
-        self.report({'INFO'}, "Modo Previz ativado com Focus Mode")
         return {'FINISHED'}
 
 
@@ -66,17 +72,12 @@ class PVZ_OT_exit_previz_mode(Operator):
     
     def execute(self, context):
         # Desativar Focus Mode se estiver ativo
-        for area in context.screen.areas:
-            if area.type == 'VIEW_3D':
-                override = context.copy()
-                override['area'] = area
-                override['region'] = area.regions[-1]
-                
-                # Verificar se está em full screen e desativar
-                if context.screen.show_fullscreen:
-                    with context.temp_override(**override):
+        if context.screen.show_fullscreen:
+            for area in context.screen.areas:
+                if area.type == 'VIEW_3D':
+                    with context.temp_override(area=area):
                         bpy.ops.screen.screen_full_area()
-                break
+                    break
         
         # Voltar para a primeira cena que não seja "Previz"
         for scene in bpy.data.scenes:
@@ -116,6 +117,20 @@ class PVZ_PT_main_panel(Panel):
                         text="SAIR DO PREVIZ", 
                         icon='BACK')
         
+        # Botão Focus Mode separado
+        layout.separator()
+        row = layout.row()
+        row.scale_y = 1.5
+        
+        if context.screen.show_fullscreen:
+            row.operator("pvz.toggle_focus_mode", 
+                        text="DESATIVAR FOCUS MODE", 
+                        icon='FULLSCREEN_EXIT')
+        else:
+            row.operator("pvz.toggle_focus_mode", 
+                        text="ATIVAR FOCUS MODE", 
+                        icon='FULLSCREEN_ENTER')
+        
         # Informações da cena atual
         layout.separator()
         box = layout.box()
@@ -133,6 +148,7 @@ class PVZ_PT_main_panel(Panel):
 
 classes = (
     PVZ_OT_toggle_previz_mode,
+    PVZ_OT_toggle_focus_mode,
     PVZ_OT_exit_previz_mode,
     PVZ_PT_main_panel,
 )
