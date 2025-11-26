@@ -63,9 +63,8 @@ class PVZ_OT_toggle_previz_mode(Operator):
                 space = area.spaces.active
                 if space.type == 'VIEW_3D':
                     space.shading.type = 'RENDERED'
-                    # Entrar na visão da câmera usando operador
-                    with context.temp_override(area=area, space=space):
-                        bpy.ops.view3d.view_camera()
+                    # Entrar na visão da câmera diretamente
+                    space.region_3d.view_perspective = 'CAMERA'
                 break
         
         self.report({'INFO'}, f"Modo Previz ativado com câmera: {selected_camera.name}")
@@ -116,8 +115,7 @@ class PVZ_OT_exit_previz_mode(Operator):
                         space = area.spaces.active
                         if space.type == 'VIEW_3D':
                             if space.region_3d.view_perspective == 'CAMERA':
-                                with context.temp_override(area=area, space=space):
-                                    bpy.ops.view3d.view_camera()
+                                space.region_3d.view_perspective = 'PERSP'
                         break
                 
                 self.report({'INFO'}, f"Voltou para cena: {scene.name}")
