@@ -7,7 +7,7 @@ bl_info = {
     "name": "PrevizMode",
     "author": "histeria",
     "version": (0, 1, 0),
-    "blender": (4, 0, 0),
+    "blender": (5, 0, 0),
     "location": "View3D > Sidebar > PREVIZ MODE",
     "description": "Interface para mudar rapidamente entre modo de render e previz",
     "category": "Previz",
@@ -15,10 +15,10 @@ bl_info = {
 
 
 # Importar módulos de forma relativa
-from . import src
+from .src import panels
 
 modules = [
-    src.panels.pvz_panel,
+    panels.pvz_panel,
 ]
 
 
