@@ -31,7 +31,7 @@ class PVZ_OT_toggle_previz_mode(Operator):
         context.window.scene = previz_scene
         
         # 3. Mudar render engine para EEVEE
-        previz_scene.render.engine = 'BLENDER_EEVEE_NEXT'
+        previz_scene.render.engine = 'BLENDER_EEVEE'
         
         # 4. Ativar modo rendered no viewport
         view3d_area = None

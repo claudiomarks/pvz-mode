@@ -6,7 +6,7 @@ from pathlib import Path
 bl_info = {
     "name": "PrevizMode",
     "author": "histeria",
-    "version": (0, 1, 0),
+    "version": (0, 2, 0),
     "blender": (5, 0, 0),
     "location": "View3D > Sidebar > PREVIZ MODE",
     "description": "Interface para mudar rapidamente entre modo de render e previz",
@@ -14,11 +14,11 @@ bl_info = {
 }
 
 
-# Importar módulos de forma relativa
-from .src import panels
+# Importar o módulo diretamente
+from .src.panels import pvz_panel
 
 modules = [
-    panels.pvz_panel,
+    pvz_panel,
 ]
 
 
