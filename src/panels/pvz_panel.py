@@ -85,11 +85,14 @@ class PVZ_OT_toggle_fly_mode(Operator):
     bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
-        # Encontrar a área 3D View
+        # Encontrar a área 3D View e a região
         for area in context.screen.areas:
             if area.type == 'VIEW_3D':
-                with context.temp_override(area=area):
-                    bpy.ops.view3d.walk()
+                for region in area.regions:
+                    if region.type == 'WINDOW':
+                        with context.temp_override(area=area, region=region):
+                            bpy.ops.view3d.walk()
+                        break
                 break
         
         return {'FINISHED'}
