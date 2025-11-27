@@ -88,10 +88,20 @@ class PVZ_OT_toggle_fly_mode(Operator):
         # Encontrar a área 3D View e a região
         for area in context.screen.areas:
             if area.type == 'VIEW_3D':
+                space = area.spaces.active
                 for region in area.regions:
                     if region.type == 'WINDOW':
-                        with context.temp_override(area=area, region=region):
-                            bpy.ops.view3d.walk()
+                        override = {
+                            'area': area,
+                            'region': region,
+                            'space_data': space,
+                        }
+                        with context.temp_override(**override):
+                            # Tentar fly mode primeiro, se não funcionar tenta walk
+                            try:
+                                bpy.ops.view3d.fly('INVOKE_DEFAULT')
+                            except:
+                                bpy.ops.view3d.walk('INVOKE_DEFAULT')
                         break
                 break
         
