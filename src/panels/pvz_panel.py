@@ -78,6 +78,23 @@ class PVZ_OT_toggle_previz_mode(Operator):
         return {'FINISHED'}
 
 
+class PVZ_OT_toggle_fly_mode(Operator):
+    """Ativa/Desativa modo de navegação WASD (Fly Mode)"""
+    bl_idname = "pvz.toggle_fly_mode"
+    bl_label = "Toggle Fly Mode"
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    def execute(self, context):
+        # Encontrar a área 3D View
+        for area in context.screen.areas:
+            if area.type == 'VIEW_3D':
+                with context.temp_override(area=area):
+                    bpy.ops.view3d.walk()
+                break
+        
+        return {'FINISHED'}
+
+
 class PVZ_OT_exit_previz_mode(Operator):
     """Sair do modo Previz e voltar para a cena anterior"""
     bl_idname = "pvz.exit_previz_mode"
@@ -267,12 +284,22 @@ class PVZ_PT_main_panel(Panel):
             row.operator("pvz.exit_previz_mode", 
                         text="SAIR DO PREVIZ", 
                         icon='BACK')
+        
+        # Botão Fly Mode (navegação WASD)
+        if is_previz:
+            layout.separator()
+            row = layout.row()
+            row.scale_y = 1.5
+            row.operator("pvz.toggle_fly_mode", 
+                        text="NAVEGAÇÃO WASD", 
+                        icon='VIEW_PAN')
 
 
 classes = (
     PVZ_CameraItem,
     PVZ_Properties,
     PVZ_OT_toggle_previz_mode,
+    PVZ_OT_toggle_fly_mode,
     PVZ_OT_exit_previz_mode,
     PVZ_OT_switch_camera,
     PVZ_OT_refresh_cameras,
