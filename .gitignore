@@ -28,3 +28,4 @@ __pycache__/
 *.zip
 build/
 dist/
+.DS_Store
