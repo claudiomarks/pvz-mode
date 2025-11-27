@@ -96,7 +96,16 @@ class PVZ_OT_exit_previz_mode(Operator):
     bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
-        # Desativar Focus Mode se estiver ativo
+        # Primeiro sair da visão da câmera se estiver nela
+        for area in context.screen.areas:
+            if area.type == 'VIEW_3D':
+                space = area.spaces.active
+                if space.type == 'VIEW_3D':
+                    if space.region_3d.view_perspective == 'CAMERA':
+                        space.region_3d.view_perspective = 'PERSP'
+                break
+        
+        # Depois desativar Focus Mode se estiver ativo
         if context.screen.show_fullscreen:
             for area in context.screen.areas:
                 if area.type == 'VIEW_3D':
@@ -104,20 +113,10 @@ class PVZ_OT_exit_previz_mode(Operator):
                         bpy.ops.screen.screen_full_area()
                     break
         
-        # Voltar para a primeira cena que não seja "Previz"
+        # Por último, voltar para a primeira cena que não seja "Previz"
         for scene in bpy.data.scenes:
             if scene.name != "Previz":
                 context.window.scene = scene
-                
-                # Sair da visão da câmera se estiver nela
-                for area in context.screen.areas:
-                    if area.type == 'VIEW_3D':
-                        space = area.spaces.active
-                        if space.type == 'VIEW_3D':
-                            if space.region_3d.view_perspective == 'CAMERA':
-                                space.region_3d.view_perspective = 'PERSP'
-                        break
-                
                 self.report({'INFO'}, f"Voltou para cena: {scene.name}")
                 return {'FINISHED'}
         
