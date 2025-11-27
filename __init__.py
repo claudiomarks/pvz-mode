@@ -6,7 +6,7 @@ from pathlib import Path
 bl_info = {
     "name": "PrevizMode",
     "author": "histeria",
-    "version": (0, 9, 0),
+    "version": (1, 0, 0),
     "blender": (5, 0, 0),
     "location": "View3D > Sidebar > PREVIZ MODE",
     "description": "Interface para mudar rapidamente entre modo de render e previz",
