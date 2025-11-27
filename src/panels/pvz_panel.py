@@ -67,25 +67,14 @@ class PVZ_OT_toggle_previz_mode(Operator):
                     space.region_3d.view_perspective = 'CAMERA'
                 break
         
-        self.report({'INFO'}, f"Modo Previz ativado com câmera: {selected_camera.name}")
-        return {'FINISHED'}
-
-
-class PVZ_OT_toggle_focus_mode(Operator):
-    """Ativa/Desativa Focus Mode (fullscreen da área 3D)"""
-    bl_idname = "pvz.toggle_focus_mode"
-    bl_label = "Toggle Focus Mode"
-    bl_options = {'REGISTER', 'UNDO'}
-    
-    def execute(self, context):
-        # Encontrar a área 3D View
+        # 6. Ativar Focus Mode (fullscreen da área 3D)
         for area in context.screen.areas:
             if area.type == 'VIEW_3D':
-                # Usar override correto para Blender 5.0+
                 with context.temp_override(area=area):
                     bpy.ops.screen.screen_full_area()
                 break
         
+        self.report({'INFO'}, f"Modo Previz ativado com câmera: {selected_camera.name}")
         return {'FINISHED'}
 
 
@@ -278,27 +267,12 @@ class PVZ_PT_main_panel(Panel):
             row.operator("pvz.exit_previz_mode", 
                         text="SAIR DO PREVIZ", 
                         icon='BACK')
-        
-        # Botão Focus Mode separado
-        layout.separator()
-        row = layout.row()
-        row.scale_y = 1.5
-        
-        if context.screen.show_fullscreen:
-            row.operator("pvz.toggle_focus_mode", 
-                        text="DESATIVAR FOCUS MODE", 
-                        icon='FULLSCREEN_EXIT')
-        else:
-            row.operator("pvz.toggle_focus_mode", 
-                        text="ATIVAR FOCUS MODE", 
-                        icon='FULLSCREEN_ENTER')
 
 
 classes = (
     PVZ_CameraItem,
     PVZ_Properties,
     PVZ_OT_toggle_previz_mode,
-    PVZ_OT_toggle_focus_mode,
     PVZ_OT_exit_previz_mode,
     PVZ_OT_switch_camera,
     PVZ_OT_refresh_cameras,
